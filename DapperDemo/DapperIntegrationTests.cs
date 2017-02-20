@@ -95,6 +95,12 @@ namespace DapperDemo
             Assert.That(actualDogs[1].Age, Is.EqualTo(expectedDogs[1].Age));
         }
 
+        [Ignore("Implement test: Read by name probably easiest")]
+        public void Foo()
+        {
+
+        }
+
         private void ExecuteSql(string sqlScript)
         {
             using (IDbConnection connection = new SqlConnection(connectionString))
