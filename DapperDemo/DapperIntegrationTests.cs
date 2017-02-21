@@ -13,20 +13,21 @@ namespace DapperDemo
     [TestFixture]
     public class DapperIntegrationTests
     {
-        string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=c:\codemy\DapperDemo\DapperDemo\DapperDemo.mdf;Integrated Security=True;Connect Timeout=30";
-        string createDogTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
-        string deleteDogTableScript = "DROP TABLE dbo.Dog";
+        private string _connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=30";
+        private string _databaseName = "DapperDemo";
+        private string _createDogTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
 
         [SetUp]
         public void SetUp()
         {
-            ExecuteSql(createDogTableScript);
+            ExecuteSql($"CREATE DATABASE {_databaseName}");
+            ExecuteSqlForDB(_createDogTableScript);
         }
 
         [TearDown]
         public void TearDown()
         {
-            ExecuteSql(deleteDogTableScript);
+            ExecuteSql("DROP DATABASE DapperDemo");
         }
 
         [Test]
@@ -35,7 +36,7 @@ namespace DapperDemo
             Dog expectedDog = new Dog { Name = "Fido", Breed = "mongrel", Age = 2 };
             List<Dog> actualDogs = new List<Dog>();
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqlConnection(GetConnectionStringForDB()))
             {
                 connection.Open();
 
@@ -77,7 +78,7 @@ namespace DapperDemo
 
             ExecuteSql(createTwoDogsScript);
 
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (IDbConnection connection = new SqlConnection(GetConnectionStringForDB()))
             {
                 connection.Open();
 
@@ -95,14 +96,24 @@ namespace DapperDemo
             Assert.That(actualDogs[1].Age, Is.EqualTo(expectedDogs[1].Age));
         }
 
-        [Ignore("Implement test: Read by name probably easiest")]
+        [Ignore("Implement test - read by an attribute (maybe two tests, one for id and one for name)")]
         public void Foo()
         {
 
         }
 
-        private void ExecuteSql(string sqlScript)
+        private void ExecuteSqlForDB(string sqlScript)
         {
+            ExecuteSql(sqlScript, GetConnectionStringForDB());
+        }
+
+        private void ExecuteSql(string sqlScript, string connectionString = null)
+        {
+            if (connectionString == null)
+            {
+                connectionString = _connectionString;
+            }
+
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -113,6 +124,11 @@ namespace DapperDemo
                     dbCommand.ExecuteNonQuery();
                 }
             }
+        }
+
+        private string GetConnectionStringForDB()
+        {
+            return _connectionString += $";Initial Catalog={_databaseName}";
         }
     }
 }
