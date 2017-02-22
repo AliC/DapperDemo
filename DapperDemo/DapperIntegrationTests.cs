@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
 using NUnit.Framework;
 
@@ -71,7 +68,7 @@ namespace DapperDemo
                 new Dog { Name = "Fido", Breed = "mongrel", Age = 2 },
                 new Dog { Name = "Shep", Breed = "sheepdog", Age = 14 }
             };
-            List<Dog> actualDogs = new List<Dog>();
+            List<Dog> actualDogs;
 
             string createTwoDogsScript =
                 "INSERT dbo.Dog SELECT " +
