@@ -13,21 +13,20 @@ namespace DapperDemo
     [TestFixture]
     public class DapperIntegrationTests
     {
-        private string _connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;Integrated Security=True;Connect Timeout=30";
         private string _databaseName = "DapperDemo";
         private string _createDogTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
 
         [SetUp]
         public void SetUp()
         {
-            ExecuteSql($"CREATE DATABASE {_databaseName}");
-            ExecuteSqlForDB(_createDogTableScript);
+            CreateDatabase();
+            ExecuteSqlForDatabase(_createDogTableScript);
         }
 
         [TearDown]
         public void TearDown()
         {
-            ExecuteSql("DROP DATABASE DapperDemo");
+            DeleteDatabase();
         }
 
         [Test]
@@ -36,7 +35,10 @@ namespace DapperDemo
             Dog expectedDog = new Dog { Name = "Fido", Breed = "mongrel", Age = 2 };
             List<Dog> actualDogs = new List<Dog>();
 
-            using (IDbConnection connection = new SqlConnection(GetConnectionStringForDB()))
+            SqlConnectionStringBuilder builder = GetBaseConnectionString();
+            builder.InitialCatalog = _databaseName;
+
+            using (IDbConnection connection = new SqlConnection(builder.ConnectionString))
             {
                 connection.Open();
 
@@ -76,9 +78,12 @@ namespace DapperDemo
                 $"'{expectedDogs[0].Name}', '{expectedDogs[0].Breed}', {expectedDogs[0].Age} UNION SELECT " +
                 $"'{expectedDogs[1].Name}', '{expectedDogs[1].Breed}', {expectedDogs[1].Age}";
 
-            ExecuteSql(createTwoDogsScript);
+            ExecuteSqlForDatabase(createTwoDogsScript);
 
-            using (IDbConnection connection = new SqlConnection(GetConnectionStringForDB()))
+            SqlConnectionStringBuilder builder = GetBaseConnectionString();
+            builder.InitialCatalog = _databaseName;
+
+            using (IDbConnection connection = new SqlConnection(builder.ConnectionString))
             {
                 connection.Open();
 
@@ -102,18 +107,30 @@ namespace DapperDemo
 
         }
 
-        private void ExecuteSqlForDB(string sqlScript)
+        private void CreateDatabase()
         {
-            ExecuteSql(sqlScript, GetConnectionStringForDB());
+            SqlConnectionStringBuilder connectionStringBuilder = GetBaseConnectionString();
+
+            ExecuteSql(connectionStringBuilder.ConnectionString, $"CREATE DATABASE {_databaseName}");
         }
 
-        private void ExecuteSql(string sqlScript, string connectionString = null)
+        private void DeleteDatabase()
         {
-            if (connectionString == null)
-            {
-                connectionString = _connectionString;
-            }
+            SqlConnectionStringBuilder connectionStringBuilder = GetBaseConnectionString();
+            
+            ExecuteSql(connectionStringBuilder.ConnectionString, $"DROP DATABASE {_databaseName}");
+        }
 
+        private void ExecuteSqlForDatabase(string sqlScript)
+        {
+            SqlConnectionStringBuilder connectionStringBuilder = GetBaseConnectionString();
+            connectionStringBuilder.InitialCatalog = _databaseName;
+
+            ExecuteSql(connectionStringBuilder.ConnectionString, sqlScript);
+        }
+
+        private void ExecuteSql(string connectionString, string sqlScript)
+        {
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
@@ -125,10 +142,16 @@ namespace DapperDemo
                 }
             }
         }
-
-        private string GetConnectionStringForDB()
+        private static SqlConnectionStringBuilder GetBaseConnectionString()
         {
-            return _connectionString += $";Initial Catalog={_databaseName}";
+            SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder();
+            connectionStringBuilder.DataSource = "(LocalDB)\\MSSQLLocalDB";
+            connectionStringBuilder.IntegratedSecurity = true;
+            connectionStringBuilder.ConnectTimeout = 30;
+
+            connectionStringBuilder.Pooling = false;
+
+            return connectionStringBuilder;
         }
     }
 }
