@@ -26,37 +26,12 @@ namespace DapperDemo
             DeleteDatabase();
         }
 
-        [Test]
-        public void GivenDogs_WhenFilteringByName_CorrectDogsReturned()
+        [Ignore("implement test")]
+        public void GivenFixedDBColumnNames_WhenIWantToUseDifferentPropertyNamesInDTOs_ThenMappingWorksCorrectly()
         {
-            IList<Dog> startingDogs = TestData.GetDogs();
+            // use another class (say, camels) to have property names that differ to the database column names
 
-            string expectedName = "Lassie";
-            IList<Dog> expectedDogs = TestData.GetDogs(expectedName);
-
-            List<Dog> actualDogs;
-
-            string createDogScript = TestData.GetInsertScriptFor(startingDogs);
-            ExecuteSqlForDatabase(createDogScript);
-
-            using (IDbConnection connection = new SqlConnection(GetConnectionString(_databaseName)))
-            {
-                connection.Open();
-
-                actualDogs = connection.Query<Dog>("SELECT * FROM dbo.Dog WHERE Name = @Name", new { Name = expectedName}).ToList();
-            }
-
-            Assert.That(actualDogs.Count, Is.EqualTo(2));
-
-            Assert.That(actualDogs[0].DogId, Is.EqualTo(expectedDogs[0].DogId));
-            Assert.That(actualDogs[0].Name, Is.EqualTo(expectedDogs[0].Name));
-            Assert.That(actualDogs[0].Breed, Is.EqualTo(expectedDogs[0].Breed));
-            Assert.That(actualDogs[0].Age, Is.EqualTo(expectedDogs[0].Age));
-
-            Assert.That(actualDogs[1].DogId, Is.EqualTo(expectedDogs[1].DogId));
-            Assert.That(actualDogs[1].Name, Is.EqualTo(expectedDogs[1].Name));
-            Assert.That(actualDogs[1].Breed, Is.EqualTo(expectedDogs[1].Breed));
-            Assert.That(actualDogs[1].Age, Is.EqualTo(expectedDogs[1].Age));
+            // demonstrate how to instruct Dapper's mapping capability to map via property attributes
         }
 
         [Test]
@@ -85,6 +60,39 @@ namespace DapperDemo
             Assert.That(actualDogs[0].Name, Is.EqualTo(expectedDog.Name));
             Assert.That(actualDogs[0].Breed, Is.EqualTo(expectedDog.Breed));
             Assert.That(actualDogs[0].Age, Is.EqualTo(expectedDog.Age));
+        }
+
+        [Test]
+        public void GivenDogs_WhenFilteringByName_CorrectDogsReturned()
+        {
+            IList<Dog> startingDogs = TestData.GetDogs();
+
+            string expectedName = "Lassie";
+            IList<Dog> expectedDogs = TestData.GetDogs(expectedName);
+
+            List<Dog> actualDogs;
+
+            string createDogScript = TestData.GetInsertScriptFor(startingDogs);
+            ExecuteSqlForDatabase(createDogScript);
+
+            using (IDbConnection connection = new SqlConnection(GetConnectionString(_databaseName)))
+            {
+                connection.Open();
+
+                actualDogs = connection.Query<Dog>("SELECT * FROM dbo.Dog WHERE Name = @Name", new { Name = expectedName }).ToList();
+            }
+
+            Assert.That(actualDogs.Count, Is.EqualTo(2));
+
+            Assert.That(actualDogs[0].DogId, Is.EqualTo(expectedDogs[0].DogId));
+            Assert.That(actualDogs[0].Name, Is.EqualTo(expectedDogs[0].Name));
+            Assert.That(actualDogs[0].Breed, Is.EqualTo(expectedDogs[0].Breed));
+            Assert.That(actualDogs[0].Age, Is.EqualTo(expectedDogs[0].Age));
+
+            Assert.That(actualDogs[1].DogId, Is.EqualTo(expectedDogs[1].DogId));
+            Assert.That(actualDogs[1].Name, Is.EqualTo(expectedDogs[1].Name));
+            Assert.That(actualDogs[1].Breed, Is.EqualTo(expectedDogs[1].Breed));
+            Assert.That(actualDogs[1].Age, Is.EqualTo(expectedDogs[1].Age));
         }
 
         [Test]
