@@ -17,6 +17,17 @@ namespace DapperDemo
             };
         }
 
+        public static IList<Wombat> GetWombats()
+        {
+            return new List<Wombat>
+            {
+                new Wombat { Id = 1, Name = "Harry", Address = "Wombat State Forest", Cuteness = 3 },
+                new Wombat { Id = 2, Name = "Rosie", Address = "Wombat Hill", Cuteness = 8 },
+                new Wombat { Id = 3, Name = "McTavish", Address = "Wombat", Cuteness = 4 },
+                new Wombat { Id = 4, Name = "Sleepy", Address = " Adelaide Zoo", Cuteness = 10 },
+            };
+        }
+
         public static Dog GetDogs(int id)
         {
             return GetDogs().First(dog => dog.DogId == id);
@@ -29,16 +40,46 @@ namespace DapperDemo
 
         public static string GetInsertScriptFor(IList<Dog> dogs)
         {
+            List<string> columnQueries = GetColumnQueries(dogs);
+            
+            return WrapWithSetIdentity("Dog", "INSERT dbo.Dog (DogId, Name, Breed, Age) SELECT " + String.Join(" UNION SELECT ", columnQueries));
+        }
+
+        public static string GetInsertScriptFor(IList<Wombat> wombats)
+        {
+            List<string> columnQueries = GetColumnQueries(wombats);
+
+            return WrapWithSetIdentity("Wombat", "INSERT dbo.Wombat (Id, Name, Address, Cuteness) SELECT " + String.Join(" UNION SELECT ", columnQueries));
+        }
+
+        private static List<string> GetColumnQueries(IList<Dog> dogs)
+        {
             List<string> columnQueries = new List<string>();
             foreach (Dog dog in dogs)
             {
                 columnQueries.Add($"{dog.DogId}, '{dog.Name}', '{dog.Breed}', {dog.Age}");
             }
 
+            return columnQueries;
+        }
+
+        private static List<string> GetColumnQueries(IList<Wombat> wombats)
+        {
+            List<string> columnQueries = new List<string>();
+            foreach (Wombat wombat in wombats)
+            {
+                columnQueries.Add($"{wombat.Id}, '{wombat.Name}', '{wombat.Address}', {wombat.Cuteness}");
+            }
+
+            return columnQueries;
+        }
+
+        private static string WrapWithSetIdentity(string tableName, string insertStatement)
+        {
             return
-                "SET IDENTITY_INSERT dbo.Dog ON;" +
-                "INSERT dbo.Dog (DogId, Name, Breed, Age) SELECT " + String.Join(" UNION SELECT ", columnQueries) +
-                "SET IDENTITY_INSERT dbo.Dog OFF;";
+                $"SET IDENTITY_INSERT dbo.{tableName} ON;" +
+                insertStatement +
+                $"SET IDENTITY_INSERT dbo.{tableName} OFF;";
         }
     }
 }

@@ -8,30 +8,26 @@ using NUnit.Framework;
 namespace DapperDemo
 {
     [TestFixture]
-    public class DapperIntegrationTests
+    public class DogTests : TestSetup
     {
-        private string _databaseName = "DapperDemo";
-        private string _createDogTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
+
+        public DogTests()
+        {
+            _createTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
+            _databaseName = "DapperDemo";
+        }
 
         [SetUp]
         public void SetUp()
         {
             CreateDatabase();
-            ExecuteSqlForDatabase(_createDogTableScript);
+            ExecuteSqlForDatabase(_createTableScript);
         }
 
         [TearDown]
         public void TearDown()
         {
             DeleteDatabase();
-        }
-
-        [Ignore("implement test")]
-        public void GivenFixedDBColumnNames_WhenIWantToUseDifferentPropertyNamesInDTOs_ThenMappingWorksCorrectly()
-        {
-            // use another class (say, camels) to have property names that differ to the database column names
-
-            // demonstrate how to instruct Dapper's mapping capability to map via property attributes
         }
 
         [Test]
@@ -151,47 +147,6 @@ namespace DapperDemo
             Assert.That(actualDogs[1].Name, Is.EqualTo(expectedDogs[1].Name));
             Assert.That(actualDogs[1].Breed, Is.EqualTo(expectedDogs[1].Breed));
             Assert.That(actualDogs[1].Age, Is.EqualTo(expectedDogs[1].Age));
-        }
-
-        private void CreateDatabase()
-        {
-            ExecuteSql(GetConnectionString(), $"CREATE DATABASE {_databaseName}");
-        }
-
-        private void DeleteDatabase()
-        {
-            ExecuteSql(GetConnectionString(), $"DROP DATABASE {_databaseName}");
-        }
-
-        private void ExecuteSqlForDatabase(string sqlScript)
-        {
-            ExecuteSql(GetConnectionString(_databaseName), sqlScript);
-        }
-
-        private void ExecuteSql(string connectionString, string sqlScript)
-        {
-            using (IDbConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-
-                using (IDbCommand dbCommand = connection.CreateCommand())
-                {
-                    dbCommand.CommandText = sqlScript;
-                    dbCommand.ExecuteNonQuery();
-                }
-            }
-        }
-        private static string GetConnectionString(string databaseName = null)
-        {
-            SqlConnectionStringBuilder connectionStringBuilder = new SqlConnectionStringBuilder();
-            connectionStringBuilder.DataSource = "(LocalDB)\\MSSQLLocalDB";
-            connectionStringBuilder.IntegratedSecurity = true;
-            connectionStringBuilder.ConnectTimeout = 30;
-            connectionStringBuilder.InitialCatalog = databaseName ?? "master";
-
-            connectionStringBuilder.Pooling = false;
-
-            return connectionStringBuilder.ConnectionString;
         }
     }
 }
