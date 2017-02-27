@@ -54,6 +54,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -63,6 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColumnAttributeTypeMapper.cs" />
+    <Compile Include="FallbackTypeMapper.cs" />
     <Compile Include="TestSetup.cs" />
     <Compile Include="Wombat.cs" />
     <Compile Include="DogTests.cs" />

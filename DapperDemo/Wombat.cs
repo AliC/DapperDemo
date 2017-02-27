@@ -1,14 +1,15 @@
-﻿namespace DapperDemo
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DapperDemo
 {
-    public abstract class AnimalDTO
+    public class Wombat
     {
+        [Column("WombatId")]
         public int Id { get; set; }
         public string Name { get; set; }
-    }
-
-    public class Wombat : AnimalDTO
-    {
+        [Column("GeographicalAddress")]
         public string Address { get; set; }
+        [Column("Rating")]
         public int Cuteness { get; set; }
     }
 

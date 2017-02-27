@@ -49,7 +49,7 @@ namespace DapperDemo
         {
             List<string> columnQueries = GetColumnQueries(wombats);
 
-            return WrapWithSetIdentity("Wombat", "INSERT dbo.Wombat (Id, Name, Address, Cuteness) SELECT " + String.Join(" UNION SELECT ", columnQueries));
+            return WrapWithSetIdentity("Wombat", "INSERT dbo.Wombat (WombatId, Name, GeographicalAddress, Rating) SELECT " + String.Join(" UNION SELECT ", columnQueries));
         }
 
         private static List<string> GetColumnQueries(IList<Dog> dogs)

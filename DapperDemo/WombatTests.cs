@@ -28,7 +28,7 @@ namespace DapperDemo
             DeleteDatabase();
         }
 
-        [Ignore("implement test")]
+        [Test]
         public void GivenFixedDBColumnNames_WhenIWantToUseDifferentPropertyNamesInDTOs_ThenMappingWorksCorrectly()
         {
             IList<Wombat> expectedWombats = TestData.GetWombats();
@@ -36,6 +36,9 @@ namespace DapperDemo
 
             string createWombatScript = TestData.GetInsertScriptFor(expectedWombats);
             ExecuteSqlForDatabase(createWombatScript);
+
+
+            SqlMapper.SetTypeMap(typeof(Wombat), new ColumnAttributeTypeMapper<Wombat>());
 
             using (IDbConnection connection = new SqlConnection(GetConnectionString(_databaseName)))
             {
@@ -46,14 +49,17 @@ namespace DapperDemo
 
             Assert.That(actualWombats.Count, Is.EqualTo(4));
 
-            Assert.That(actualWombats[0].Name, Is.EqualTo(actualWombats[0].Name));
-            Assert.That(actualWombats[0].Address, Is.EqualTo(actualWombats[0].Address));
-            Assert.That(actualWombats[0].Cuteness, Is.EqualTo(actualWombats[0].Cuteness));
+            Assert.That(actualWombats[0].Id, Is.EqualTo(expectedWombats[0].Id));
+            Assert.That(actualWombats[0].Name, Is.EqualTo(expectedWombats[0].Name));
+            Assert.That(actualWombats[0].Address, Is.EqualTo(expectedWombats[0].Address));
+            Assert.That(actualWombats[0].Cuteness, Is.EqualTo(expectedWombats[0].Cuteness));
 
-            Assert.That(actualWombats[1].Name, Is.EqualTo(actualWombats[1].Name));
-            Assert.That(actualWombats[1].Address, Is.EqualTo(actualWombats[1].Address));
-            Assert.That(actualWombats[1].Cuteness, Is.EqualTo(actualWombats[1].Cuteness));
+            Assert.That(actualWombats[1].Id, Is.EqualTo(expectedWombats[1].Id));
+            Assert.That(actualWombats[1].Name, Is.EqualTo(expectedWombats[1].Name));
+            Assert.That(actualWombats[1].Address, Is.EqualTo(expectedWombats[1].Address));
+            Assert.That(actualWombats[1].Cuteness, Is.EqualTo(expectedWombats[1].Cuteness));
         }
+
 
     }
 }
