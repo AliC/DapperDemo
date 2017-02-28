@@ -14,20 +14,6 @@ namespace DapperDemo
         public DogTests()
         {
             _createTableScript = "CREATE TABLE dbo.Dog ( DogId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), Breed NVARCHAR(64), Age INT )";
-            _databaseName = "DapperDemo";
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            CreateDatabase();
-            ExecuteSqlForDatabase(_createTableScript);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DeleteDatabase();
         }
 
         [Test]

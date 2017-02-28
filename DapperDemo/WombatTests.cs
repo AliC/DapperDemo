@@ -11,21 +11,7 @@ namespace DapperDemo
     {
         public WombatTests()
         {
-            _databaseName = "DapperDemo";
             _createTableScript = "CREATE TABLE dbo.Wombat ( WombatId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128), GeographicalAddress NVARCHAR(256), Rating INT )";
-        }
-
-        [SetUp]
-        public void SetUp()
-        {
-            CreateDatabase();
-            ExecuteSqlForDatabase(_createTableScript);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            DeleteDatabase();
         }
 
         [Test]

@@ -1,12 +1,27 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using NUnit.Framework;
 
 namespace DapperDemo
 {
     public class TestSetup
     {
-        protected string _databaseName;
+        protected string _databaseName = "DapperDemo";
+
         protected string _createTableScript;
+
+        [SetUp]
+        public virtual void SetUp()
+        {
+            CreateDatabase();
+            ExecuteSqlForDatabase(_createTableScript);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            DeleteDatabase();
+        }
 
         protected void CreateDatabase()
         {
