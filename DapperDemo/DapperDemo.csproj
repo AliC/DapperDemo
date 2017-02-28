@@ -65,7 +65,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ColumnAttributeTypeMapper.cs" />
+    <Compile Include="Dodo.cs" />
+    <Compile Include="DodoTests.cs" />
     <Compile Include="FallbackTypeMapper.cs" />
+    <Compile Include="GameStatistics.cs" />
     <Compile Include="TestSetup.cs" />
     <Compile Include="Wombat.cs" />
     <Compile Include="DogTests.cs" />

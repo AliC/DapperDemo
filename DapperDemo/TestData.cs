@@ -28,6 +28,17 @@ namespace DapperDemo
             };
         }
 
+        public static IList<Dodo> GetDodos()
+        {
+            return new List<Dodo>
+            {
+                new Dodo { Id = 1, Name = "Anthony", GameStatistics = new GameStatistics { BitePower = 19, Cuteness = 1, Speed = 8 } },
+                new Dodo { Id = 2, Name = "Samantha", GameStatistics = new GameStatistics { BitePower = 2, Cuteness = 10, Speed = 20 } },
+                new Dodo { Id = 3, Name = "Norris", GameStatistics = new GameStatistics { BitePower = 9, Cuteness = 18, Speed = 12 } },
+                new Dodo { Id = 4, Name = "Tommy", GameStatistics = new GameStatistics { BitePower = 16, Cuteness = 14, Speed = 15 } },
+            };
+        }
+
         public static Dog GetDogs(int id)
         {
             return GetDogs().First(dog => dog.DogId == id);
