@@ -37,7 +37,6 @@ namespace DapperDemo
             string createWombatScript = TestData.GetInsertScriptFor(expectedWombats);
             ExecuteSqlForDatabase(createWombatScript);
 
-
             SqlMapper.SetTypeMap(typeof(Wombat), new ColumnAttributeTypeMapper<Wombat>());
 
             using (IDbConnection connection = new SqlConnection(GetConnectionString(_databaseName)))
