@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -63,6 +64,17 @@ namespace DapperDemo
             return WrapWithSetIdentity("Wombat", "INSERT dbo.Wombat (WombatId, Name, GeographicalAddress, Rating) SELECT " + String.Join(" UNION SELECT ", columnQueries));
         }
 
+        public static string GetInsertScriptFor(IList<Dodo> dodos)
+        {
+            List<string> columnQueriesForDodos = GetColumnQueries(dodos);
+            string script = WrapWithSetIdentity("Dodo", "INSERT dbo.Dodo (Id, Name) SELECT " + String.Join(" UNION SELECT ", columnQueriesForDodos));
+
+            List<string> columnQueriesForGameStatistics = GetColumnQueries(dodos.Select((d, i) => new { DodoId = i, d.GameStatistics }));
+            script += "\nGO\nINSERT dbo.GameStatistics (DodoId, BitePower, Cuteness, Speed) SELECT " + String.Join(" UNION SELECT ", columnQueriesForGameStatistics);
+
+            return script;
+        }
+
         private static List<string> GetColumnQueries(IList<Dog> dogs)
         {
             List<string> columnQueries = new List<string>();
@@ -80,6 +92,28 @@ namespace DapperDemo
             foreach (Wombat wombat in wombats)
             {
                 columnQueries.Add($"{wombat.Id}, '{wombat.Name}', '{wombat.Address}', {wombat.Cuteness}");
+            }
+
+            return columnQueries;
+        }
+
+        private static List<string> GetColumnQueries(IList<Dodo> dodos)
+        {
+            List<string> columnQueries = new List<string>();
+            foreach (Dodo dodo in dodos)
+            {
+                columnQueries.Add($"{dodo.Id}, '{dodo.Name}'");
+            }
+
+            return columnQueries;
+        }
+
+        private static List<string> GetColumnQueries(IEnumerable<dynamic> gameStatistics)
+        {
+            List<string> columnQueries = new List<string>();
+            foreach (dynamic stat in gameStatistics)
+            {
+                columnQueries.Add($"{stat.DodoId}, {stat.GameStatistics.BitePower}, {stat.GameStatistics.Cuteness}, {stat.GameStatistics.Speed}");
             }
 
             return columnQueries;

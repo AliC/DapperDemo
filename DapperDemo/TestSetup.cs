@@ -1,9 +1,12 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
 using NUnit.Framework;
 
 namespace DapperDemo
 {
+    [TestFixture]
     public class TestSetup
     {
         protected string _databaseName = "DapperDemo";
@@ -55,6 +58,8 @@ namespace DapperDemo
         {
             using (IDbConnection connection = new SqlConnection(connectionString))
             {
+                Server server = new Server(new ServerConnection(connection));
+
                 connection.Open();
 
                 using (IDbCommand dbCommand = connection.CreateCommand())
