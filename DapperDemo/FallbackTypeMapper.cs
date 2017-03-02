@@ -32,7 +32,7 @@ namespace DapperDemo
                         return result;
                     }
                 }
-                catch (NotImplementedException nix)
+                catch (NotImplementedException)
                 {
                     // the CustomPropertyTypeMap only supports a no-args
                     // constructor and throws a not implemented exception.
@@ -57,7 +57,7 @@ namespace DapperDemo
                         return result;
                     }
                 }
-                catch (NotImplementedException nix)
+                catch (NotImplementedException)
                 {
                     // the CustomPropertyTypeMap only supports a no-args
                     // constructor and throws a not implemented exception.

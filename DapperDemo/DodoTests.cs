@@ -18,6 +18,8 @@ namespace DapperDemo
             IList<Dodo> actualDodos;
 
             string createDodoScript = TestData.GetInsertScriptFor(expectedDodos);
+
+            ExecuteSqlForDatabase(createDodoScript);
         }
     }
 }

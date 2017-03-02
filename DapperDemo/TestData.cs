@@ -69,7 +69,7 @@ namespace DapperDemo
             List<string> columnQueriesForDodos = GetColumnQueries(dodos);
             string script = WrapWithSetIdentity("Dodo", "INSERT dbo.Dodo (Id, Name) SELECT " + String.Join(" UNION SELECT ", columnQueriesForDodos));
 
-            List<string> columnQueriesForGameStatistics = GetColumnQueries(dodos.Select((d, i) => new { DodoId = i, d.GameStatistics }));
+            List<string> columnQueriesForGameStatistics = GetColumnQueries(dodos.Select((d, i) => new { DodoId = i + 1, d.GameStatistics }));
             script += "\nGO\nINSERT dbo.GameStatistics (DodoId, BitePower, Cuteness, Speed) SELECT " + String.Join(" UNION SELECT ", columnQueriesForGameStatistics);
 
             return script;
@@ -122,9 +122,9 @@ namespace DapperDemo
         private static string WrapWithSetIdentity(string tableName, string insertStatement)
         {
             return
-                $"SET IDENTITY_INSERT dbo.{tableName} ON;" +
+                $"SET IDENTITY_INSERT dbo.{tableName} ON;\n" +
                 insertStatement +
-                $"SET IDENTITY_INSERT dbo.{tableName} OFF;";
+                $"\nSET IDENTITY_INSERT dbo.{tableName} OFF;\n";
         }
     }
 }

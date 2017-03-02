@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Management.Common;
 using Microsoft.SqlServer.Management.Smo;
@@ -56,17 +57,13 @@ namespace DapperDemo
 
         private void ExecuteSql(string connectionString, string sqlScript)
         {
-            using (IDbConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 Server server = new Server(new ServerConnection(connection));
 
-                connection.Open();
+                Console.WriteLine($"Executing SQL: {sqlScript}\n");
 
-                using (IDbCommand dbCommand = connection.CreateCommand())
-                {
-                    dbCommand.CommandText = sqlScript;
-                    dbCommand.ExecuteNonQuery();
-                }
+                server.ConnectionContext.ExecuteNonQuery(sqlScript);
             }
         }
     }
