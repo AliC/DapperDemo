@@ -11,11 +11,11 @@ namespace DapperDemo
     {
         public DodoTests()
         {
-            _createTableScript = "CREATE TABLE dbo.Dodo ( Id INT IDENTITY PRIMARY KEY, Name NVARCHAR(128))";
-            _createTableScript += "\nGO\nCREATE TABLE dbo.GameStatistics (Id INT IDENTITY PRIMARY KEY, DodoId INT REFERENCES Dodo(Id), Bitepower INT, Cuteness INT, Speed INT)";
+            _createTableScript = "CREATE TABLE dbo.Dodo ( DodoId INT IDENTITY PRIMARY KEY, Name NVARCHAR(128))";
+            _createTableScript += "\nGO\nCREATE TABLE dbo.GameStatistics (Id INT IDENTITY PRIMARY KEY, DodoId INT REFERENCES Dodo(DodoId), Bitepower INT, Cuteness INT, Speed INT)";
         }
 
-        [Ignore("complete test")]
+        [Test]
         public void GivenClassAssociation_WhenDataReadFromDatabase_DataMappedToMultipleObjects()
         {
             IList<Dodo> expectedDodos = TestData.GetDodos();
@@ -25,21 +25,32 @@ namespace DapperDemo
 
             ExecuteSqlForDatabase(createDodoScript);
 
+            SqlMapper.SetTypeMap(typeof(Dodo), new ColumnAttributeTypeMapper<Dodo>());
+
             using (IDbConnection connection = new SqlConnection(GetConnectionString(_databaseName)))
             {
                 connection.Open();
 
-                actualDodos = connection.Query<Dodo>("SELECT * FROM dbo.Wombat").ToList();
+                actualDodos = connection.Query<Dodo, GameStatistics, Dodo>(
+                    "SELECT * FROM dbo.Dodo d LEFT OUTER JOIN dbo.GameStatistics g ON d.DodoId = g.DodoId",
+                    (dodo, stat) =>
+                    {
+                        dodo.GameStatistics = stat;
+
+                        return dodo;
+                    }).ToList();
             }
 
             Assert.That(actualDodos.Count, Is.EqualTo(4));
 
-            Assert.That(actualDodos[0].Id, Is.EqualTo(expectedDodos[0].Id));
-            Assert.That(actualDodos[0].Name, Is.EqualTo(expectedDodos[0].Name));
-            Assert.That(actualDodos[0].GameStatistics.BitePower, Is.EqualTo(expectedDodos[0].GameStatistics.BitePower));
-
-            Assert.That(actualDodos[1].Id, Is.EqualTo(expectedDodos[1].Id));
-            Assert.That(actualDodos[1].Name, Is.EqualTo(expectedDodos[1].Name));
+            for (int i = 0; i < 4; i++)
+            {
+                Assert.That(actualDodos[i].Id, Is.EqualTo(expectedDodos[i].Id));
+                Assert.That(actualDodos[i].Name, Is.EqualTo(expectedDodos[i].Name));
+                Assert.That(actualDodos[i].GameStatistics.BitePower, Is.EqualTo(expectedDodos[i].GameStatistics.BitePower));
+                Assert.That(actualDodos[i].GameStatistics.Cuteness, Is.EqualTo(expectedDodos[i].GameStatistics.Cuteness));
+                Assert.That(actualDodos[i].GameStatistics.Speed, Is.EqualTo(expectedDodos[i].GameStatistics.Speed));
+            }
         }
     }
 }
