@@ -6,8 +6,7 @@ namespace DapperDemo
 {
     public class ColumnAttributeTypeMapper<T> : FallbackTypeMapper
     {
-        public ColumnAttributeTypeMapper()
-            : base(new SqlMapper.ITypeMap[]
+        public ColumnAttributeTypeMapper() : base(new SqlMapper.ITypeMap[]
             {
                 new CustomPropertyTypeMap(
                     typeof(T),

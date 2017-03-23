@@ -10,6 +10,8 @@ namespace DapperDemo
     [TestFixture]
     public class TestSetup
     {
+        private bool _dontExecuteSql = true;
+
         protected string _databaseName = "DapperDemo";
 
         protected string _createTableScript;
@@ -56,6 +58,23 @@ namespace DapperDemo
         }
 
         private void ExecuteSql(string connectionString, string sqlScript)
+        {
+            if (_dontExecuteSql)
+            {
+                ExecuteSqlNoOp(connectionString, sqlScript);
+            }
+            else
+            {
+                ExecuteSqlOp(connectionString, sqlScript);
+            }
+        }
+
+        private void ExecuteSqlNoOp(string connectionString, string sqlScript)
+        {
+            Console.WriteLine($"Executing SQL (no-op): {sqlScript}\n");
+        }
+
+        private void ExecuteSqlOp(string connectionString, string sqlScript)
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
