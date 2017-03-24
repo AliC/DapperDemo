@@ -1,4 +1,5 @@
 USE master;
+GO
 DROP DATABASE DapperDemo
 GO
 CREATE DATABASE DapperDemo
@@ -19,4 +20,7 @@ INSERT dbo.GameStatistics (DodoId, BitePower, Cuteness, Speed) SELECT 1, 19, 1, 
 GO
 
 SELECT * FROM dbo.Dodo d LEFT OUTER JOIN dbo.GameStatistics g ON d.DodoId = g.DodoId
+GO
 
+USE master;
+GO

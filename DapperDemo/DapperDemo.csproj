@@ -92,6 +92,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aardvark.cs" />
     <Compile Include="AardvarkTests.cs" />
     <Compile Include="ColumnAttributeTypeMapper.cs" />
     <Compile Include="Dodo.cs" />

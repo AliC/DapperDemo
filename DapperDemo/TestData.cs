@@ -40,6 +40,17 @@ namespace DapperDemo
             };
         }
 
+        public static IList<Aardvark> GetAardvarks()
+        {
+            return new List<Aardvark>
+            {
+                new Aardvark { Id = 1, Name = "Digger", Behaviours = new [] { "Long walks", "Sunbathing" } },
+                new Aardvark { Id = 2, Name = "Scrapper", Behaviours = new string[] { } },
+                new Aardvark { Id = 3, Name = "Fluffy", Behaviours = new [] { "Good sense of humour" } },
+                new Aardvark { Id = 4, Name = "Fred", Behaviours = new [] { "Snout-surfing" } }
+            };
+        }
+
         public static Dog GetDogs(int id)
         {
             return GetDogs().First(dog => dog.DogId == id);

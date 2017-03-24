@@ -1,4 +1,5 @@
 USE master;
+GO
 DROP DATABASE DapperDemo
 GO
 CREATE DATABASE DapperDemo
@@ -18,16 +19,17 @@ GO
 INSERT dbo.GameStatistics (DodoId, BitePower, Cuteness, Speed) SELECT 1, 19, 1, 8 UNION SELECT 2, 2, 10, 20 UNION SELECT 3, 9, 18, 12 UNION SELECT 4, 16, 14, 15
 GO
 
-CREATE PROC dbo.GetDodos
+CREATE PROC dbo.GetAardvarks
 AS
 BEGIN
 	SET NOCOUNT ON;
 
-	SELECT * FROM dbo.Dodo d LEFT OUTER JOIN dbo.GameStatistics g ON d.DodoId = g.DodoId
+	SELECT * FROM dbo.Aardvark a LEFT OUTER JOIN dbo.Behaviours b ON a.Id = b.AardvarkId
 END
 GO
 
-EXEC dbo.GetDodos
+EXEC dbo.GetAardvarks
 GO
 
--- sp_helptext 'GetDodos'
+USE master;
+GO
